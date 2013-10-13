@@ -39,8 +39,12 @@
 /// @brief
 ////////////////////////////////////////////////////////////////////////////////
 GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent) {
-	current_quaternion = QQuaternion();
+	current_pitch = 3.1415f*0.25f;
+	current_yaw = 3.1415f*0.25f;
 	current_zoom = 2.0;
+
+	render_timer = new QTime();
+	render_timer->start();
 }
 
 
@@ -54,7 +58,7 @@ GLWidget::~GLWidget() {
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief
 ////////////////////////////////////////////////////////////////////////////////
-/*QGLShaderProgram* GLWidget::compileShader(const QString& name) {
+QGLShaderProgram* GLWidget::compileShader(const QString& name) {
 	if (!QGLShaderProgram::hasOpenGLShaderPrograms(context())) {
 		return 0;
 	}
@@ -62,14 +66,14 @@ GLWidget::~GLWidget() {
 	QGLShader fragment(QGLShader::Fragment);
 	QGLShader vertex(QGLShader::Vertex);
 
-	//if (!fragment.compileSourceFile("../source/foxworks_editor/resources/" + name + ".frag")) {
-	if (!fragment.compileSourceFile(":/" + name + ".frag")) {
-		QMessageBox::warning(0, tr("EVDS Editor"),tr("Shader error in [%1.frag]:\n%2.").arg(name).arg(fragment.log()));
+	if (!fragment.compileSourceFile("../shaders/" + name + ".frag")) {
+	//if (!fragment.compileSourceFile(":/" + name + ".frag")) {
+		QMessageBox::warning(0, tr("Exhaust Editor"),tr("Shader error in [%1.frag]:\n%2.").arg(name).arg(fragment.log()));
 		return 0;
 	}
-	//if (!vertex.compileSourceFile("../source/foxworks_editor/resources/" + name + ".vert")) {
-	if (!vertex.compileSourceFile(":/" + name + ".vert")) {
-		QMessageBox::warning(0, tr("EVDS Editor"),tr("Shader error in [%1.vert]:\n%2.").arg(name).arg(fragment.log()));
+	if (!vertex.compileSourceFile("../shaders/" + name + ".vert")) {
+	//if (!vertex.compileSourceFile(":/" + name + ".vert")) {
+		QMessageBox::warning(0, tr("Exhaust Editor"),tr("Shader error in [%1.vert]:\n%2.").arg(name).arg(fragment.log()));
 		return 0;
 	}
 
@@ -78,29 +82,14 @@ GLWidget::~GLWidget() {
 	shader->addShader(&vertex);
 	shader->link();
 	return shader;	
-}*/
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief
 ////////////////////////////////////////////////////////////////////////////////
 void GLWidget::initializeGL() {
-	//Load shaders
-	//reloadShaders();
-	
-	//Create framebuffer
-	//fbo_outline = 0;
-	//fbo_selected_outline = 0;
-	//fbo_window = 0;
-
-	// For VSYNC problem under Mac OS X
-	#if defined(Q_OS_MAC)
-	const GLint swapInterval = 1;
-	CGLSetParameter(CGLGetCurrentContext(), kCGLCPSwapInterval, &swapInterval);
-	#endif
-
-	//m_GlView.initGl();
-	//m_GlView.reframe(m_Collection.boundingBox());
+	shader_exhaust = compileShader("exhaust");
 }
 
 
@@ -168,6 +157,83 @@ void GLWidget::resizeGL(int width, int height)
 /// @brief
 ////////////////////////////////////////////////////////////////////////////////
 void GLWidget::paintGL() {
+	//Setup viewport
+	float aspect = ((float)width())/((float)height());
+	glViewport(0,0,width(),height());
+
+	//Setup camera
+	QVector3D camera_pos = QVector3D(
+		current_zoom*4.0*cos(current_yaw)*cos(current_pitch),
+		current_zoom*4.0*sin(current_yaw)*cos(current_pitch),
+		current_zoom*4.0*sin(current_pitch));
+	QMatrix4x4 projection_matrix;
+	projection_matrix.perspective(45.0f,aspect,1.0f,500.0f);
+	QMatrix4x4 view_matrix;
+	view_matrix.lookAt(camera_pos,QVector3D(0,0,0),QVector3D(0,0,1));
+
+	//Load matrices
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixd(projection_matrix.data());
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixd(view_matrix.data());
+
+	//Clear background
+	glClearColor(0.00f,0.00f,0.00f,1.00f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+
+	/*fw_render_get_camera(camPos,camUp);
+	glUseProgram(exhaust_program);
+	glUniform3f(glGetUniformLocation(exhaust_program,"v_cameraPos"), (float)camPos[0], (float)camPos[1], (float)camPos[2]);
+	glUniform1f(glGetUniformLocation(exhaust_program,"time"), EVDS_Thread_GetTime());*/
+
+	glEnable(GL_CULL_FACE);
+	if (shader_exhaust) {
+		shader_exhaust->bind();
+		shader_exhaust->setUniformValue("time",(float)(render_timer->elapsed()/1000.0));
+		shader_exhaust->setUniformValue("v_cameraPos",camera_pos);
+	}
+
+	//Draw rocket engine exhaust
+	float dX  = 30.0f;
+	float dYZ = 1.0f;
+	glBegin(GL_QUADS);
+		glColor3f(0.0f,1.0f,0.0f);
+		glVertex3f( dX  , dYZ ,-dYZ );
+		glVertex3f(-0.0f, dYZ ,-dYZ );
+		glVertex3f(-0.0f, dYZ , dYZ );
+		glVertex3f( dX  , dYZ , dYZ );
+		glColor3f(1.0f,0.5f,0.0f);
+		glVertex3f( dX  ,-dYZ , dYZ );
+		glVertex3f(-0.0f,-dYZ , dYZ );
+		glVertex3f(-0.0f,-dYZ ,-dYZ );
+		glVertex3f( dX  ,-dYZ ,-dYZ );
+		glColor3f(1.0f,0.0f,0.0f);
+		glVertex3f( dX  , dYZ , dYZ );
+		glVertex3f(-0.0f, dYZ , dYZ );
+		glVertex3f(-0.0f,-dYZ , dYZ );
+		glVertex3f( dX  ,-dYZ , dYZ );
+		glColor3f(1.0f,1.0f,0.0f);
+		glVertex3f( dX  ,-dYZ ,-dYZ );
+		glVertex3f(-0.0f,-dYZ ,-dYZ );
+		glVertex3f(-0.0f, dYZ ,-dYZ );
+		glVertex3f( dX  , dYZ ,-dYZ );
+		glColor3f(0.0f,0.0f,1.0f);
+		glVertex3f(-0.0f, dYZ , dYZ );
+		glVertex3f(-0.0f, dYZ ,-dYZ );
+		glVertex3f(-0.0f,-dYZ ,-dYZ );
+		glVertex3f(-0.0f,-dYZ , dYZ );
+		glColor3f(1.0f,0.0f,1.0f);
+		glVertex3f( dX  , dYZ ,-dYZ );
+		glVertex3f( dX  , dYZ , dYZ );
+		glVertex3f( dX  ,-dYZ , dYZ );
+		glVertex3f( dX  ,-dYZ ,-dYZ );
+	glEnd();
+	glPopMatrix();
+
+	if (shader_exhaust) {
+		shader_exhaust->release();
+	}
 }
 
 
@@ -186,31 +252,12 @@ void GLWidget::mouseMoveEvent(QMouseEvent* e) {
 	int dx = e->x() - last_pos.x();
 	int dy = e->y() - last_pos.y();
 
-	/*if (event->buttons() & Qt::LeftButton) {
-		if (event->modifiers() & Qt::ControlModifier) {
-			EVDS_QUATERNION delta_quaternion;
-			EVDS_Quaternion_SetEuler(&delta_quaternion,0,0,0,EVDS_RAD(0.2f*(dx+dy)));
-			EVDS_Quaternion_Multiply(&current_quaternion,&current_quaternion,&delta_quaternion);
-		} else {
-			EVDS_QUATERNION delta_quaternion;
-			EVDS_Quaternion_SetEuler(&delta_quaternion,0,0,-EVDS_RAD(0.2f*dx),0);
-			EVDS_Quaternion_Multiply(&current_quaternion,&current_quaternion,&delta_quaternion);
-			EVDS_Quaternion_SetEuler(&delta_quaternion,0,EVDS_RAD(0.2f*dy),0,0);
-			EVDS_Quaternion_Multiply(&current_quaternion,&current_quaternion,&delta_quaternion);
-		}
+	if (e->buttons() & Qt::LeftButton) {
+		current_pitch -= dy*0.0025f;
+		current_yaw += dx*0.0025f;
 
 		updateGL();
 	}
-	if (event->buttons() & Qt::RightButton) {
-		float scale = 2.0 / ((float)height());
-
-		EVDS_VECTOR delta_vector;
-		EVDS_Vector_Set(&delta_vector,0,0,dx*scale*zZoom,-dy*scale*zZoom,0);
-		EVDS_Vector_Rotate(&delta_vector,&delta_vector,&current_quaternion);
-		EVDS_Vector_Add(&current_offset,&current_offset,&delta_vector);
-
-		updateGL();
-	}*/
 	last_pos = e->pos();
 }
 

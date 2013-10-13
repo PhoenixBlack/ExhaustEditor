@@ -32,6 +32,7 @@
 #include <QGLWidget>
 #include <QGLShader>
 #include <QGLFramebufferObject>
+#include <QTime>
 
 class GLWidget : public QGLWidget {
 	Q_OBJECT
@@ -51,22 +52,19 @@ protected:
 	void mouseMoveEvent(QMouseEvent *e);
 	void wheelEvent(QWheelEvent *e);
 
+	QGLShaderProgram* compileShader(const QString& name);
+
 private:
 	QPoint last_pos;
+	QTime* render_timer;
 
 	//Camera parameters
 	float current_zoom;
-	QQuaternion current_quaternion;
+	float current_pitch;
+	float current_yaw;
 
-	//Shaders and framebuffers
-	//bool antialiasingEnabled;
-	//QGLFramebufferObject* fbo_outline;
-	//QGLFramebufferObject* fbo_selected_outline;
-	//QGLFramebufferObject* fbo_window;
-	//QGLShaderProgram* shader_outline_object;
-	//QGLShaderProgram* shader_outline_fbo;
-	//QGLShaderProgram* shader_background;
-	//QGLShaderProgram* shader_fxaa;
+	//Shaders
+	QGLShaderProgram* shader_exhaust;
 };
 
 #endif
