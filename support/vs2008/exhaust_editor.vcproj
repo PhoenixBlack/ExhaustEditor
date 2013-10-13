@@ -187,6 +187,14 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\source\glwidget.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\glwidget.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\source\main.cpp"
 			>
 		</File>
@@ -198,6 +206,10 @@
 			Name="qtmoc"
 			Filter=""
 			>
+			<File
+				RelativePath="..\..\qtmoc\moc_glwidget.cpp"
+				>
+			</File>
 			<File
 				RelativePath="..\..\qtmoc\moc_main.cpp"
 				>

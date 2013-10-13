@@ -30,6 +30,7 @@
 #include <QIcon>
 
 #include "main.h"
+#include "glwidget.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,8 +79,10 @@ int main(int argc, char *argv[]) {
 /// @brief
 ////////////////////////////////////////////////////////////////////////////////
 MainWindow::MainWindow() {
-	QWidget* form = new QWidget;
-	setCentralWidget(form);
+	//QWidget* form = new QWidget;
+	//setCentralWidget(form);
+	GLWidget* glwidget = new GLWidget(this);
+	setCentralWidget(glwidget);
 
 	//Set default title and size
 	/*QIcon foxworks_icon = QIcon();
