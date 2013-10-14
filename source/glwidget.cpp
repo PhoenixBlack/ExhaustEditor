@@ -43,8 +43,14 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent) {
 	current_yaw = 3.1415f*0.25f;
 	current_zoom = 2.0;
 
+	//Calculate animation in time
 	render_timer = new QTime();
 	render_timer->start();
+	
+	//Redraw the widget all the time
+	QTimer* update_timer = new QTimer(this);
+	connect(update_timer, SIGNAL(timeout()), this, SLOT(updateGL()));
+	update_timer->start(25);
 }
 
 
@@ -163,13 +169,13 @@ void GLWidget::paintGL() {
 
 	//Setup camera
 	QVector3D camera_pos = QVector3D(
-		current_zoom*4.0*cos(current_yaw)*cos(current_pitch),
+		2.0+current_zoom*4.0*cos(current_yaw)*cos(current_pitch),
 		current_zoom*4.0*sin(current_yaw)*cos(current_pitch),
 		current_zoom*4.0*sin(current_pitch));
 	QMatrix4x4 projection_matrix;
-	projection_matrix.perspective(45.0f,aspect,1.0f,500.0f);
+	projection_matrix.perspective(45.0f,aspect,0.01f,100.0f);
 	QMatrix4x4 view_matrix;
-	view_matrix.lookAt(camera_pos,QVector3D(0,0,0),QVector3D(0,0,1));
+	view_matrix.lookAt(camera_pos,QVector3D(2.0,0,0),QVector3D(0,0,1));
 
 	//Load matrices
 	glMatrixMode(GL_PROJECTION);
@@ -180,22 +186,41 @@ void GLWidget::paintGL() {
 	//Clear background
 	glClearColor(0.00f,0.00f,0.00f,1.00f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
 
-	/*fw_render_get_camera(camPos,camUp);
-	glUseProgram(exhaust_program);
-	glUniform3f(glGetUniformLocation(exhaust_program,"v_cameraPos"), (float)camPos[0], (float)camPos[1], (float)camPos[2]);
-	glUniform1f(glGetUniformLocation(exhaust_program,"time"), EVDS_Thread_GetTime());*/
 
+	/*//Setup OpenGL state for drawing engine bell
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+
+	//Draw the engine bell
+	glBegin(GL_TRIANGLE_STRIP);
+	glColor3f(0.5f,0.5f,0.5f);
+	for (float angle = 0; angle <= 360.0; angle += 10.0) {
+		float r1 = 0.05f;
+		float r2 = 1.5f;
+		glVertex3f( -10.0,r1*cos(angle*3.1415926/180.0),r1*sin(angle*3.1415926/180.0));
+		glVertex3f( 1.0,r2*cos(angle*3.1415926/180.0),r2*sin(angle*3.1415926/180.0));
+	}
+	glEnd();*/
+
+
+	//Setup OpenGL state for drawing rocket engine exhaust
 	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	//glDisable(GL_DEPTH_TEST);
+
 	if (shader_exhaust) {
 		shader_exhaust->bind();
-		shader_exhaust->setUniformValue("time",(float)(render_timer->elapsed()/1000.0));
+		shader_exhaust->setUniformValue("f_time",(float)(render_timer->elapsed()/1000.0));
 		shader_exhaust->setUniformValue("v_cameraPos",camera_pos);
 	}
 
 	//Draw rocket engine exhaust
-	float dX  = 30.0f;
+	float dX  = 20.0f;
 	float dYZ = 1.0f;
 	glBegin(GL_QUADS);
 		glColor3f(0.0f,1.0f,0.0f);
@@ -229,8 +254,8 @@ void GLWidget::paintGL() {
 		glVertex3f( dX  ,-dYZ , dYZ );
 		glVertex3f( dX  ,-dYZ ,-dYZ );
 	glEnd();
-	glPopMatrix();
 
+	//Turn off the shader
 	if (shader_exhaust) {
 		shader_exhaust->release();
 	}

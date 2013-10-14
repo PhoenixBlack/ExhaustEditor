@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\Qt\4.8.4\include;C:\Qt\4.8.4\include\QtCore;C:\Qt\4.8.4\include\QtGui;C:\Qt\4.8.4\include\QtUiTools;C:\Qt\4.8.4\include\QtOpenGL;..\..\qtmoc"
+				AdditionalIncludeDirectories="C:\Qt\4.8.5\include;C:\Qt\4.8.5\include\QtCore;C:\Qt\4.8.5\include\QtGui;C:\Qt\4.8.5\include\QtUiTools;C:\Qt\4.8.5\include\QtOpenGL;..\..\qtmoc"
 				PreprocessorDefinitions="DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -57,7 +57,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="DEBUG"
-				AdditionalIncludeDirectories="C:\Qt\4.8.4\include;C:\Qt\4.8.4\include\QtCore;C:\Qt\4.8.4\include\QtGui;C:\Qt\4.8.4\include\QtUiTools;C:\Qt\4.8.4\include\QtOpenGL;..\..\qtmoc"
+				AdditionalIncludeDirectories="C:\Qt\4.8.5\include;C:\Qt\4.8.5\include\QtCore;C:\Qt\4.8.5\include\QtGui;C:\Qt\4.8.5\include\QtUiTools;C:\Qt\4.8.5\include\QtOpenGL;..\..\qtmoc"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -67,7 +67,7 @@
 				AdditionalDependencies="QtCored4.lib QtGuid4.lib QtUiToolsd.lib QtOpenGLd4.lib opengl32.lib"
 				OutputFile="$(OutDir)\exhaust_editord.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="C:\Qt\4.8.4\lib"
+				AdditionalLibraryDirectories="C:\Qt\4.8.5\lib"
 				GenerateDebugInformation="true"
 				ProgramDataBaseFileName="$(OutDir)\exhaust_editord.pdb"
 				SubSystem="1"
@@ -124,7 +124,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="C:\Qt\4.8.4\include;C:\Qt\4.8.4\include\QtCore;C:\Qt\4.8.4\include\QtGui;C:\Qt\4.8.4\include\QtUiTools;C:\Qt\4.8.4\include\QtOpenGL;..\..\qtmoc"
+				AdditionalIncludeDirectories="C:\Qt\4.8.5\include;C:\Qt\4.8.5\include\QtCore;C:\Qt\4.8.5\include\QtGui;C:\Qt\4.8.5\include\QtUiTools;C:\Qt\4.8.5\include\QtOpenGL;..\..\qtmoc"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -138,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="C:\Qt\4.8.4\include;C:\Qt\4.8.4\include\QtCore;C:\Qt\4.8.4\include\QtGui;C:\Qt\4.8.4\include\QtUiTools;C:\Qt\4.8.4\include\QtOpenGL;..\..\qtmoc"
+				AdditionalIncludeDirectories="C:\Qt\4.8.5\include;C:\Qt\4.8.5\include\QtCore;C:\Qt\4.8.5\include\QtGui;C:\Qt\4.8.5\include\QtUiTools;C:\Qt\4.8.5\include\QtOpenGL;..\..\qtmoc"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -148,7 +148,7 @@
 				AdditionalDependencies="QtCore4.lib QtGui4.lib QtUiTools.lib QtOpenGL4.lib opengl32.lib"
 				OutputFile="$(OutDir)\exhaust_editor.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\Qt\4.8.4\lib"
+				AdditionalLibraryDirectories="C:\Qt\4.8.5\lib"
 				GenerateDebugInformation="true"
 				ProgramDataBaseFileName="$(OutDir)\exhaust_editor.pdb"
 				SubSystem="1"

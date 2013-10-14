@@ -49,7 +49,7 @@ newaction {
 }
 
 -- Default Qt paths
-local QtDefault = "C:/Qt/4.8.4"
+local QtDefault = "C:/Qt/4.8.5"
 local QtMOCPath = "/bin/moc.exe"
 local QtRCCPath = "/bin/rcc.exe"
 local QtGenPath = "../qtmoc"
