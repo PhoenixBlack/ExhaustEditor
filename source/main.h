@@ -32,17 +32,12 @@
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
-class QAction;
-class QMenu;
-class QMdiArea;
-class QMdiSubWindow;
-class QSignalMapper;
-class QStackedLayout;
-class QSettings;
+class QFormLayout;
 QT_END_NAMESPACE
 
 
 ////////////////////////////////////////////////////////////////////////////////
+class GLWidget;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -54,10 +49,12 @@ protected:
 	void closeEvent(QCloseEvent *event);
 
 private slots:
-	//...
+	void valueChanged(int i_value);
 
 private:
-	//...
+	GLWidget* glwidget;
+	QFormLayout* settings_layout;
+	void addSlider(QString param, double value, QString name, double min, double max);
 };
 
 #endif

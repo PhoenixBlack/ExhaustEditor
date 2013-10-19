@@ -51,6 +51,9 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent) {
 	QTimer* update_timer = new QTimer(this);
 	connect(update_timer, SIGNAL(timeout()), this, SLOT(updateGL()));
 	update_timer->start(25);
+	
+	//Defaults for parameters
+	//parameter["core_lf"] = 0.0f;
 }
 
 
@@ -217,6 +220,11 @@ void GLWidget::paintGL() {
 		shader_exhaust->bind();
 		shader_exhaust->setUniformValue("f_time",(float)(render_timer->elapsed()/1000.0));
 		shader_exhaust->setUniformValue("v_cameraPos",camera_pos);
+
+		QHash<QString, double>::iterator i;
+		for (i = parameter.begin(); i != parameter.end(); ++i) {
+			shader_exhaust->setUniformValue(i.key().toAscii().data(),(GLfloat)i.value());
+		}
 	}
 
 	//Draw rocket engine exhaust

@@ -6,6 +6,12 @@ uniform vec3 v_cameraPos;
 varying vec3 v_texCoord3D;
 //varying float f_depth;
 
+//Shader parameters
+uniform float core_ef;
+uniform float core_lf;
+uniform float core_cef;
+uniform float core_clf;
+
 const int i_numSamples = 8;
 
 
@@ -91,11 +97,11 @@ float snoise(vec3 v) {
 // Volumetric color intensity function
 //==============================================================================
 //Exhaust constants
-const float radius   = 0.5;  //Nozzle radius
-const float core_ef  = 4.0;  //Exponential falloff (radial)
-const float core_lf  = 0.0;  //Exponential falloff (length)
-const float core_cef = 4.0;  //Cutoff falloff (radial)
-const float core_clf = 0.0;  //Cutoff falloff (length)
+const float radius   = 0.1;  //Nozzle radius
+//const float core_ef  = 4.0;  //Exponential falloff (radial)
+//const float core_lf  = 0.0;  //Exponential falloff (length)
+//const float core_cef = 4.0;  //Cutoff falloff (radial)
+//const float core_clf = 0.0;  //Cutoff falloff (length)
 
 vec3 exhaustColor(vec3 pos) {
   //Cylindric coordinates of the point

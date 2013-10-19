@@ -79,10 +79,28 @@ int main(int argc, char *argv[]) {
 /// @brief
 ////////////////////////////////////////////////////////////////////////////////
 MainWindow::MainWindow() {
-	//QWidget* form = new QWidget;
-	//setCentralWidget(form);
-	GLWidget* glwidget = new GLWidget(this);
-	setCentralWidget(glwidget);
+	//Setup form with layout
+	QVBoxLayout* layout = new QVBoxLayout;
+	QWidget* form = new QWidget;
+	setCentralWidget(form);
+	form->setLayout(layout);
+
+	//Add settings panel
+	settings_layout = new QFormLayout;
+	QWidget* settings = new QWidget;
+	settings->setLayout(settings_layout);
+	layout->addWidget(settings);
+
+	//Add widgets to layout
+	glwidget = new GLWidget(this);
+	layout->addWidget(glwidget,1);
+
+	//Add control
+	addSlider("core_ef", 4.0,	"Exponential falloff (radial)",		-5.0, 8.0);
+	addSlider("core_lf", 0.0,	"Exponential falloff (length)",		-5.0, 8.0);
+	addSlider("core_cef", 4.0,	"Cutoff falloff (radial)",			-5.0, 8.0);
+	addSlider("core_clf", 0.0,	"Cutoff falloff (length)",			-5.0, 8.0);
+
 
 	//Set default title and size
 	/*QIcon foxworks_icon = QIcon();
@@ -105,4 +123,26 @@ MainWindow::MainWindow() {
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::closeEvent(QCloseEvent *event) {
 	//...
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::valueChanged(int i_value) {
+	glwidget->parameter[sender()->objectName()] = i_value*0.01f;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::addSlider(QString param, double value, QString name, double min, double max) {
+	QSlider* slider = new QSlider(Qt::Horizontal);
+	slider->setObjectName(param);
+	slider->setMinimum(min*100.0);
+	slider->setMaximum(max*100.0);
+	slider->setValue(value*100.0);
+	connect(slider,SIGNAL(valueChanged(int)),this,SLOT(valueChanged(int)));
+	settings_layout->addRow(name+":",slider);
 }

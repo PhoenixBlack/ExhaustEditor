@@ -43,6 +43,8 @@ public:
 
 	QSize minimumSizeHint() const { return QSize(50, 50); }
 
+	QHash<QString,double> parameter;
+
 protected:
 	void initializeGL();
 	void paintGL();
